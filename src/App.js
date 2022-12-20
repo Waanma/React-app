@@ -1,25 +1,30 @@
-import logo from './logo.svg';
+import React, { useState, useContext} from 'react';
+import {Sidebar, Header, CartItem} from './components'
+import { useFetch } from './hooks/useFetch';
+import { Link } from 'react-router-dom';
+import { URL_BASE, URL_ENDPOINTS } from './constants/services';
+import Router from './router';
 import './App.css';
+import { CartProvider } from './context';
 
-function App() {
+const App = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [showProducts, setShowProducts] = useState(false);
+  const { data: user, error, loading } = useFetch(`${URL_BASE}${URL_ENDPOINTS.USERS}`);
+
+  const onHandlerCart = () => {
+    setIsOpen(!isOpen);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <CartProvider>
+      <Sidebar onClose={onHandlerCart} isOpen={isOpen} />
+      <Header onHandlerCart={onHandlerCart} user={user[0]} />
+      <Router />
+      </CartProvider>
     </div>
-  );
+  )
 }
 
 export default App;
